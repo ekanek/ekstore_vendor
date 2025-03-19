@@ -1,0 +1,17 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: localhost
+
+development:
+  <<: *default
+  database: ekstore_development
+
+test:
+  <<: *default
+  database: ekstore_test
+
+production:
+  <<: *default
+  database: ekstore_production
