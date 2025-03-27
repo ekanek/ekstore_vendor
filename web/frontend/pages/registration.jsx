@@ -17,7 +17,7 @@ import {
   } from "@shopify/polaris";
 
   import { useState, useReducer, useCallback, useEffect } from "react";
-  import { useSearchParams } from "react-router-dom";
+  import { useSearchParams, useNavigate } from "react-router-dom";
   import {NoteIcon} from '@shopify/polaris-icons';
   import axios from "axios";
   import { useVendorStatus } from "../components/providers/VendorStatusProvider";
@@ -112,6 +112,7 @@ import {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [isSubmitted, setIsSubmitted] = useState(false);
     const esignPending = searchParams.get('esignPending') === 'true';
     const [showErrorModal, setShowErrorModal] = useState(false);
@@ -130,16 +131,16 @@ import {
   
     // Add this useEffect to debug shop parameter
     useEffect(() => {
-      const shopParam = searchParams.get('shop');
+      const shopParam = vendorStatus.shop;
       
       if (!shopParam) {
         console.warn('Shop parameter is missing from URL');
       }
-    }, [searchParams]);
+    }, [vendorStatus.shop]);
   
     const getShopParam = useCallback(() => {
-      const shopFromParams = searchParams.get('shop');
-      if (shopFromParams) return shopFromParams;
+      const shopName = vendorStatus.shop;
+      if (shopName) return shopName;
       
       const shopFromStorage = localStorage.getItem('shopify-shop-domain');
       if (shopFromStorage) return shopFromStorage;
@@ -184,7 +185,7 @@ import {
         }
       }
       
-    }, [searchParams, getShopParam]);
+    }, [searchParams, vendorStatus.shop]);
   
     useEffect(() => {
       if (vendorStatus && !localStorage.getItem('shopify-shop-domain')) {
@@ -252,12 +253,12 @@ import {
           formData.append('current_step', currentStep.toString());
           
           const response = await axios.post(
-            "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+            "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
             formData,
             {
               headers: {
                 "Content-Type": "multipart/form-data",
-                "shop": getShopParam(),
+                "shop": vendorStatus.shop,
                 "Accept": "application/json",
                 "Origin": window.location.origin
               },
@@ -361,12 +362,12 @@ import {
 
       try {
         const response = await axios.post(
-          "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+          "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              "shop": getShopParam(),
+              "shop": vendorStatus.shop,
               "Accept": "application/json",
               "Origin": window.location.origin
             },
@@ -385,9 +386,8 @@ import {
       }
     };
 
-    // Update handleDocumentCheck to use the working getShopParam function
     const handleDocumentCheck = async () => {
-      const shopParam = getShopParam();
+      const shopParam = vendorStatus.shop;
       
       if (!shopParam) {
         console.error("Shop parameter could not be determined");
@@ -399,10 +399,10 @@ import {
       
       try {
         const response = await axios.get(
-          "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
+          "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
           {
             headers: {
-              "shop": shopParam,
+              "shop": vendorStatus.shop,
               "Accept": "application/json",
               "Origin": window.location.origin
             }
@@ -445,17 +445,17 @@ import {
 
     // Update the button click handler
     const handleSendDocument = async () => {
-      const shopParam = getShopParam();
+      const shopParam = vendorStatus.shop;
       if (shopParam) {
         setLoading(true);
         try {
           const response = await axios.post(
-            "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
+            "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
             {},
             {
               headers: {
                 "Content-Type": "application/json",
-                "shop": shopParam,
+                "shop": vendorStatus.shop,
                 "Accept": "application/json",
                 "Origin": window.location.origin
               },
@@ -486,8 +486,9 @@ import {
     };
 
     // Update the Modal component
-    const handleSuccessModalAction = useCallback(() => {
-      const shopParam = getShopParam();
+    const handleSuccessModalAction = () => {
+      const shopParam = searchParams.get('shop');
+      
       if (shopParam) {
         // First update the vendor status
         if (vendorStatus && typeof vendorStatus.setVendorStatus === 'function') {
@@ -502,16 +503,13 @@ import {
         // Close the modal
         setShowSuccessModal(false);
 
-        // Use setTimeout to ensure state updates are processed
-        setTimeout(() => {
-          // Use replace instead of href to prevent back navigation
-          window.location.replace(`/catalogue-settings?shop=${shopParam}`);
-        }, 100);
+        // Navigate to catalogue settings using the navigate function
+        navigate(`/catalogue-settings?shop=${shopParam}`);
       } else {
         console.error("Shop parameter could not be determined");
         setShowErrorModal(true);
       }
-    }, [vendorStatus, getShopParam]);
+    };
 
     if (isSubmitted || vendorStatus.isRegistered) {
         return (
@@ -583,7 +581,7 @@ import {
                 >
                     <Modal.Section>
                         <p>
-                          {!getShopParam() 
+                          {!vendorStatus.shop 
                             ? "Unable to determine shop information. Please try refreshing the page or contact support."
                             : "Your document signing is not yet complete. Please complete the signing process and try again."}
                         </p>
