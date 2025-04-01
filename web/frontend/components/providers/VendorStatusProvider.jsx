@@ -26,8 +26,8 @@ export function VendorStatusProvider({ children }) {
 
   useEffect(() => {
     const checkVendorStatus = async () => {
+      const shop = searchParams.get('shop') || '';
       try {
-        const shop = searchParams.get('shop') || '';
         if (!shop || hasFetchedStatus.current) return;
 
         const response = await axios.get(
