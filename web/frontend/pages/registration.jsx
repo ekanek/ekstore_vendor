@@ -252,12 +252,12 @@ import {
           formData.append('current_step', currentStep.toString());
           
           const response = await axios.post(
-            "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+            "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
             formData,
             {
               headers: {
                 "Content-Type": "multipart/form-data",
-                "shop": getShopParam(),
+                "shop": vendorStatus.shop,
                 "Accept": "application/json",
                 "Origin": window.location.origin
               },
@@ -361,12 +361,12 @@ import {
 
       try {
         const response = await axios.post(
-          "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+          "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              "shop": getShopParam(),
+              "shop": vendorStatus.shop,
               "Accept": "application/json",
               "Origin": window.location.origin
             },
@@ -399,10 +399,10 @@ import {
       
       try {
         const response = await axios.get(
-          "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
+          "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
           {
             headers: {
-              "shop": shopParam,
+              "shop": vendorStatus.shop,
               "Accept": "application/json",
               "Origin": window.location.origin
             }
@@ -450,12 +450,12 @@ import {
         setLoading(true);
         try {
           const response = await axios.post(
-            "https://cfr-joshua-perspectives-cornell.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
+            "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
             {},
             {
               headers: {
                 "Content-Type": "application/json",
-                "shop": shopParam,
+                "shop": vendorStatus.shop,
                 "Accept": "application/json",
                 "Origin": window.location.origin
               },

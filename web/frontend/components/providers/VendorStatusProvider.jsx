@@ -8,7 +8,7 @@ const VendorStatusContext = createContext(null);
 export const useVendorStatus = () => useContext(VendorStatusContext);
 
 // Define your API base URL - consider moving this to an environment variable
-const API_BASE_URL = "https://cfr-joshua-perspectives-cornell.trycloudflare.com";
+const API_BASE_URL = "https://facing-ball-apollo-relative.trycloudflare.com";
 
 // Export the provider as a named export (not default)
 export function VendorStatusProvider({ children }) {
@@ -26,8 +26,8 @@ export function VendorStatusProvider({ children }) {
 
   useEffect(() => {
     const checkVendorStatus = async () => {
+      const shop = searchParams.get('shop') || '';
       try {
-        const shop = searchParams.get('shop') || '';
         if (!shop || hasFetchedStatus.current) return;
 
         const response = await axios.get(
@@ -50,6 +50,7 @@ export function VendorStatusProvider({ children }) {
             isRegistered: success ? form_completion_status : false,
             esignStatus: success ? esign_status : null,
             organisationExists: success,
+            shop: shop,
           });
 
           // Handle routing based on response
@@ -73,6 +74,7 @@ export function VendorStatusProvider({ children }) {
           esignStatus: null,
           isCatalogueSettingsCompleted: false,
           organisationExists: false,
+          shop: shop,
         });
         navigate('/');
       }
