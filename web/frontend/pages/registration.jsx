@@ -253,7 +253,7 @@ import {
           formData.append('current_step', currentStep.toString());
           
           const response = await axios.post(
-            "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+            "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
             formData,
             {
               headers: {
@@ -362,7 +362,7 @@ import {
 
       try {
         const response = await axios.post(
-          "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+          "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
           formData,
           {
             headers: {
@@ -399,7 +399,7 @@ import {
       
       try {
         const response = await axios.get(
-          "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
+          "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
           {
             headers: {
               "shop": vendorStatus.shop,
@@ -450,7 +450,7 @@ import {
         setLoading(true);
         try {
           const response = await axios.post(
-            "https://facing-ball-apollo-relative.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
+            "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
             {},
             {
               headers: {
