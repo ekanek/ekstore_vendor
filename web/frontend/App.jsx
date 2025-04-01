@@ -7,6 +7,7 @@ import {
   QueryProvider,
   PolarisProvider,
   VendorStatusProvider,
+  VendorDashboardDetailsProvider,
 } from './components/providers';
 
 export default function App() {
@@ -20,13 +21,15 @@ export default function App() {
       <BrowserRouter>
         <QueryProvider>
           <VendorStatusProvider>
-            <NavMenu>
-              <Link to='/' rel='home'>
-                Home
-              </Link>
-              <Link to='/dashboard'>Dashboard</Link>
-            </NavMenu>
-            <Routes pages={pages} />
+            <VendorDashboardDetailsProvider>
+              <NavMenu>
+                <Link to='/' rel='home'>
+                  Home
+                </Link>
+                <Link to='/dashboard'>Dashboard</Link>
+              </NavMenu>
+              <Routes pages={pages} />
+            </VendorDashboardDetailsProvider>
           </VendorStatusProvider>
         </QueryProvider>
       </BrowserRouter>
