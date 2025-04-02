@@ -15,6 +15,13 @@ Rails.application.routes.draw do
       end
     end
 
+    # /api/shops/
+    resources :shops do
+      collection do
+        get :get_access_token
+      end
+    end
+
     namespace :webhooks do
       post "/app_uninstalled", to: "app_uninstalled#receive"
       post "/app_scopes_update", to: "app_scopes_update#receive"

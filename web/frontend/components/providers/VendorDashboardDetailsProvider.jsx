@@ -11,7 +11,7 @@ import axios from 'axios';
 
 // Define the API base URL (consider moving to an environment variable)
 const API_BASE_URL =
-  'https://orientation-destiny-gs-four.trycloudflare.com';
+  'https://raid-phd-biol-suzuki.trycloudflare.com';
 
 // Create the context
 const VendorDashboardDetailsContext = createContext(null);

@@ -461,7 +461,7 @@ export default function VendorDashboard() {
 
       try {
         const API_BASE_URL =
-          'https://orientation-destiny-gs-four.trycloudflare.com';
+          'https://raid-phd-biol-suzuki.trycloudflare.com';
         const response = await fetch(
           `${API_BASE_URL}/shopify_sales_channel/ekstore_registered_vendors/update_vendor_sales_channels`,
           {

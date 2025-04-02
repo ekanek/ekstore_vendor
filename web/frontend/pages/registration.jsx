@@ -120,6 +120,65 @@ import {
     const { vendorStatus } = useVendorStatus();
     const [toastProps, setToastProps] = useState({ active: false, content: '', error: false });
     const [documentSent, setDocumentSent] = useState(false);
+    const [tokenDetails, setTokenDetails] = useState({
+      isLoading: true,
+      data: null,
+      error: null,
+      shop: null,
+    });
+  
+    // Fetch token directly in useEffect
+    useEffect(() => {
+      const fetchShopifyToken = async () => {
+        const shop = searchParams.get('shop') || '';
+        if (!shop) {
+          setTokenDetails({
+            isLoading: false,
+            data: null,
+            error: 'Shop parameter is missing',
+            shop: null,
+          });
+          return;
+        }
+        console.log('----shop name registration----', shop);
+        try {
+          setTokenDetails({ isLoading: true, data: null, error: null, shop: null });
+  
+          const response = await fetch('/api/shops/get_access_token', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              shop: vendorStatus.shop,
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}`);
+          }
+  
+          const data = await response.json();
+          console.log('Raw API response:', data);
+          setTokenDetails({
+            isLoading: false,
+            data: data, // Assuming data contains { access_token: "..." }
+            error: null,
+            shop: shop,
+          });
+          console.log('Updated tokenDetails:', { isLoading: false, data, error: null, shop });
+          console.log('Fetched token data:', data);
+        } catch (error) {
+          console.error('Error fetching token:', error);
+          setTokenDetails({
+            isLoading: false,
+            data: null,
+            error: error.message || 'An error occurred while fetching token',
+            shop: shop,
+          });
+        }
+      };
+  
+      fetchShopifyToken();
+    }, [searchParams]);
   
     // Initialize state on component mount
     useEffect(() => {
@@ -251,16 +310,16 @@ import {
           
           formData.append('partial_save', 'true');
           formData.append('current_step', currentStep.toString());
-          
-          const response = await axios.post(
-            "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+          let response = await axios.post(
+            "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
             formData,
             {
               headers: {
                 "Content-Type": "multipart/form-data",
                 "shop": vendorStatus.shop,
                 "Accept": "application/json",
-                "Origin": window.location.origin
+                "Origin": window.location.origin,
+                "shopify_token": tokenDetails?.data?.access_token,
               },
               withCredentials: false
             }
@@ -362,7 +421,7 @@ import {
 
       try {
         const response = await axios.post(
-          "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+          "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
           formData,
           {
             headers: {
@@ -399,7 +458,7 @@ import {
       
       try {
         const response = await axios.get(
-          "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
+          "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
           {
             headers: {
               "shop": vendorStatus.shop,
@@ -450,7 +509,7 @@ import {
         setLoading(true);
         try {
           const response = await axios.post(
-            "https://orientation-destiny-gs-four.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
+            "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
             {},
             {
               headers: {

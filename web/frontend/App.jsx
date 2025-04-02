@@ -8,6 +8,7 @@ import {
   PolarisProvider,
   VendorStatusProvider,
   VendorDashboardDetailsProvider,
+  ShopifyTokenProvider,
 } from './components/providers';
 
 export default function App() {
@@ -20,17 +21,19 @@ export default function App() {
     <PolarisProvider>
       <BrowserRouter>
         <QueryProvider>
-          <VendorStatusProvider>
-            <VendorDashboardDetailsProvider>
-              <NavMenu>
-                <Link to='/' rel='home'>
-                  Home
-                </Link>
-                <Link to='/dashboard'>Dashboard</Link>
-              </NavMenu>
-              <Routes pages={pages} />
-            </VendorDashboardDetailsProvider>
-          </VendorStatusProvider>
+          <ShopifyTokenProvider>
+            <VendorStatusProvider>
+              <VendorDashboardDetailsProvider>
+                <NavMenu>
+                  <Link to='/' rel='home'>
+                    Home
+                  </Link>
+                  <Link to='/dashboard'>Dashboard</Link>
+                </NavMenu>
+                <Routes pages={pages} />
+              </VendorDashboardDetailsProvider>
+            </VendorStatusProvider>
+          </ShopifyTokenProvider>
         </QueryProvider>
       </BrowserRouter>
     </PolarisProvider>
