@@ -135,32 +135,7 @@ import {
       loadAllData();
     }, []);
   
-    useEffect(() => {
-      // Load existing settings when component mounts
-      const loadExistingSettings = async () => {
-        try {
-          const shopParam = getShopParam();
-          if (!shopParam) return;
 
-          const response = await fetch(`/api/catalogue_settings?shop=${shopParam}`);
-          const data = await response.json();
-
-          if (data.success) {
-            setSelectedTags(data.tags || []);
-            setSelectedProducts(data.products || []);
-            setFormValues(prev => ({
-              ...prev,
-              min_mrp: data.min_mrp ? data.min_mrp.toString() : "0"
-            }));
-          }
-        } catch (error) {
-          console.error("Error loading catalogue settings:", error);
-        }
-      };
-
-      loadExistingSettings();
-    }, [getShopParam]);
-  
     // Update the tag filtering function
     const updateTagText = useCallback(
       (value) => {

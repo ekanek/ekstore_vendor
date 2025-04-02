@@ -8,7 +8,7 @@ const VendorStatusContext = createContext(null);
 export const useVendorStatus = () => useContext(VendorStatusContext);
 
 // Define your API base URL - consider moving this to an environment variable
-const API_BASE_URL = "https://orientation-destiny-gs-four.trycloudflare.com";
+const API_BASE_URL = "https://raid-phd-biol-suzuki.trycloudflare.com";
 
 // Export the provider as a named export (not default)
 export function VendorStatusProvider({ children }) {
