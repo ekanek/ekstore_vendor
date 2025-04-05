@@ -26,6 +26,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :shopify_apps, only: [] do
+    collection do
+      get :dashboard
+      get :auto_login
+    end
+  end
+
   mount ShopifyApp::Engine, at: "/api"
   get "/api", to: redirect(path: "/") # Needed because our engine root is /api but that breaks frontend routing
   # Add this to your existing routes
