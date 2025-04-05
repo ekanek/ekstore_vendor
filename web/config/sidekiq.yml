@@ -1,0 +1,15 @@
+# Configuration file for Sidekiq.
+# Options here can still be overridden by cmd line args.
+# Place this file at config/sidekiq.yml and Sidekiq will
+# pick it up automatically.
+---
+
+:queues:
+  - [otp_sms, 2]
+  
+
+  
+
+
+# This queue needs to be brought back some day.
+#- foxy_api_andy_warhol

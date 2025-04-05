@@ -3,6 +3,8 @@
 Rails.application.routes.draw do
   root to: "home#index"
 
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   scope path: :api, format: :json do

@@ -82,4 +82,16 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  if ENV['LOCAL_REDIS']
+    config.redis = {
+      queue: 'redis://localhost:6379/1',
+      cache: 'redis://localhost:6379/3'
+    }
+  else
+    config.redis = {
+      queue: 'redis://localhost:6379/1',
+      cache: 'redis://localhost:6379/3'
+    }
+  end
 end

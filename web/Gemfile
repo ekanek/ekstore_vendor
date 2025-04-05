@@ -78,3 +78,10 @@ group :test do
 end
 
 gem "shopify_app", "~> 22.2"
+gem 'sidekiq'
+gem 'sidekiq-failures'
+gem 'sidekiq-scheduler'
+gem 'sidekiq-unique-jobs'
+
+# Load environment variables from .env file
+gem 'dotenv-rails', groups: [:development, :test]
