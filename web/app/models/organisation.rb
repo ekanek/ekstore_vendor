@@ -1,7 +1,7 @@
 class Organisation < ApplicationRecord
   extend ArrayEnum
-  # mount_uploader :pancard_copy, ImageUploader
-  # mount_uploader :msme_certificate, ImageUploader
+  mount_uploader :pancard_copy, ImageUploader
+  mount_uploader :msme_certificate, ImageUploader
 
   enum status: { draft: 0, published: 1, deactivated: 2}
   array_enum roles: { buyer: 0, seller: 1, marketplace: 2, dtc_brand: 3, importer: 4, exporter: 5, ekstore_seller: 6 }

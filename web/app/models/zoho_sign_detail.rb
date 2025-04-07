@@ -11,7 +11,7 @@ class ZohoSignDetail < ApplicationRecord
 
   private
 
-  def sync_vendor_sku_detials
-    Shopify::ImportEkstoreProductsJob.perform_async(self.organisation&.shopify_account&.id)
+  def self.sync_vendor_sku_detials
+    ImportEkstoreProductJob.perform_async(self.organisation&.shopify_account&.id)
   end
 end

@@ -5,7 +5,7 @@
 ---
 
 :queues:
-  - [otp_sms, 2]
+  - [import_ekstore_product, 1]
   
 
   
