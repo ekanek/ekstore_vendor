@@ -24,6 +24,23 @@ Rails.application.routes.draw do
       post "/customers_redact", to: "customers_redact#receive"
       post "/shop_redact", to: "shop_redact#receive"
     end
+
+    post "/ekstore_registered_vendors/create_vendor_record", to: "ekstore_registered_vendors#create_vendor_record"
+    post "/ekstore_registered_vendors/update_vendor_catalogue_settings", to: "ekstore_registered_vendors#update_vendor_catalogue_settings"
+    get "/ekstore_registered_vendors/get_vendor_status", to: "ekstore_registered_vendors#get_vendor_status"
+    get "/ekstore_registered_vendors/vendor_dashboard_details", to: "ekstore_registered_vendors#vendor_dashboard_details"
+    post "/ekstore_registered_vendors/update_vendor_sales_channels", to: "ekstore_registered_vendors#update_vendor_sales_channels"
+    get "/zoho_esign_status", to: "ekstore_registered_vendors#check_esign_status"
+    post "/send_document_for_esign", to: "ekstore_registered_vendors#send_document_for_esign"
+    post "/zoho_sign/signed_doc", to: "zoho_webhooks#signed_doc"
+  
+    match ["/ekstore_registered_vendors/create_vendor_record", 
+           "/ekstore_registered_vendors/update_vendor_catalogue_settings", 
+           "/ekstore_registered_vendors/get_vendor_status", 
+           "/zoho_esign_status", 
+           "/ekstore_registered_vendors/vendor_dashboard_details", 
+           "/ekstore_registered_vendors/update_vendor_sales_channels"], 
+          to: "ekstore_registered_vendors#options", via: :options
   end
 
   resources :shopify_apps, only: [] do

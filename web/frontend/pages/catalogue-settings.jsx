@@ -136,7 +136,6 @@ import {
     }, []);
   
     useEffect(() => {
-      // Load existing settings when component mounts
       const loadExistingSettings = async () => {
         try {
           const shopParam = getShopParam();
