@@ -319,7 +319,7 @@ export default function AdditionalPage() {
       </Box>
       <div style={{ paddingBottom: 8 }}>
         <Text variant='headingLg' as='h5'>
-          Analytics Dashboard
+          Settings
         </Text>
       </div>
       <Card roundedAbove='sm'>

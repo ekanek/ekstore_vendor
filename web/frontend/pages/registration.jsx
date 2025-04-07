@@ -140,7 +140,6 @@ import {
           });
           return;
         }
-        console.log('----shop name registration----', shop);
         try {
           setTokenDetails({ isLoading: true, data: null, error: null, shop: null });
   
@@ -164,7 +163,6 @@ import {
             error: null,
             shop: shop,
           });
-          console.log('Updated tokenDetails:', { isLoading: false, data, error: null, shop });
           console.log('Fetched token data:', data);
         } catch (error) {
           console.error('Error fetching token:', error);
@@ -311,7 +309,7 @@ import {
           formData.append('partial_save', 'true');
           formData.append('current_step', currentStep.toString());
           let response = await axios.post(
-            "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+            "/ekstore_registered_vendors/create_vendor_record",
             formData,
             {
               headers: {
@@ -421,7 +419,7 @@ import {
 
       try {
         const response = await axios.post(
-          "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/ekstore_registered_vendors/create_vendor_record",
+          "/ekstore_registered_vendors/create_vendor_record",
           formData,
           {
             headers: {
@@ -458,7 +456,7 @@ import {
       
       try {
         const response = await axios.get(
-          "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/zoho_esign_status",
+          "/zoho_esign_status",
           {
             headers: {
               "shop": vendorStatus.shop,
@@ -509,7 +507,7 @@ import {
         setLoading(true);
         try {
           const response = await axios.post(
-            "https://raid-phd-biol-suzuki.trycloudflare.com/shopify_sales_channel/send_document_for_esign",
+            "/send_document_for_esign",
             {},
             {
               headers: {
@@ -562,8 +560,11 @@ import {
         // Close the modal
         setShowSuccessModal(false);
 
-        // Navigate to catalogue settings using the navigate function
-        navigate(`/catalogue-settings?shop=${shopParam}`);
+        // Use setTimeout to ensure state updates are processed
+        setTimeout(() => {
+          // Use replace instead of href to prevent back navigation
+          window.location.replace(`/vendor-dashboard?shop=${vendorStatus.shop}`);
+        }, 100);
       } else {
         console.error("Shop parameter could not be determined");
         setShowErrorModal(true);
