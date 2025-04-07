@@ -1,6 +1,6 @@
 class ShopifyAppsController < ApplicationController
   before_action :set_tenant, except: [:auto_login]
-  # before_action :verify_tenant, except: [:tenant_name, :auto_login]
+  before_action :verify_tenant, except: [:tenant_name, :auto_login]
   skip_before_action :verify_authenticity_token
   before_action :auto_login_if_shopify_store, only: [:auto_login]
 
@@ -87,49 +87,23 @@ class ShopifyAppsController < ApplicationController
     redirect_to report_schedules_path
   end
   
-  def database_info
-    # Get database connection information
-    db_config = ActiveRecord::Base.connection_config
-    current_db = ActiveRecord::Base.connection.current_database
-    schema_path = ActiveRecord::Base.connection.schema_search_path
-    
-    # Get tenant information
-    tenant = Apartment::Tenant.current
-    
-    # Get sample data from the database
-    order_count = Order.count rescue "Error: #{e.message}"
-    user_count = User.count rescue "Error: #{e.message}"
-    
-    render json: {
-      database_configuration: db_config,
-      current_database: current_db,
-      schema_search_path: schema_path,
-      current_tenant: tenant,
-      sample_data: {
-        order_count: order_count,
-        user_count: user_count
-      }
-    }
-  end
-  
   private 
   def set_tenant
-    # encrypted_data = request.headers['tenant-info']
-    # @encrypted_data_for_url = Base64.urlsafe_encode64(encrypted_data)
-    # decrypted_data = CryptoHelper.new.decrypt_aes(encrypted_data)
-    # decrypted_data = JSON.parse(decrypted_data)
-    # decrypted_data = decrypted_data.with_indifferent_access
-    # @tenant_name = decrypted_data[:name]
-    @domain = "#{"public"}.%{project}.ekanek.app"
+    encrypted_data = request.headers['tenant-info']
+    @encrypted_data_for_url = Base64.urlsafe_encode64(encrypted_data)
+    decrypted_data = CryptoHelper.new.decrypt_aes(encrypted_data)
+    decrypted_data = JSON.parse(decrypted_data)
+    decrypted_data = decrypted_data.with_indifferent_access
+    @tenant_name = decrypted_data[:name]
+    @domain = "#{@tenant_name}.%{project}.ekanek.app"
   end
 
-  # def verify_tenant
-  #   if @tenant_name != Apartment::Tenant.current
-  #     render json: {}, status: :unauthorized
-  #     return
-  #   end
-  # end
-
+  def verify_tenant
+    if @tenant_name != Apartment::Tenant.current
+      render json: {}, status: :unauthorized
+      return
+    end
+  end
 
   def auto_login_if_shopify_store
     employee = Employee.find_by(email: 'shopify.default@ekanek.io')
