@@ -309,7 +309,7 @@ import {
           formData.append('partial_save', 'true');
           formData.append('current_step', currentStep.toString());
           let response = await axios.post(
-            "/ekstore_registered_vendors/create_vendor_record",
+            "/api/ekstore_registered_vendors/create_vendor_record",
             formData,
             {
               headers: {
@@ -419,7 +419,7 @@ import {
 
       try {
         const response = await axios.post(
-          "/ekstore_registered_vendors/create_vendor_record",
+          "/api/ekstore_registered_vendors/create_vendor_record",
           formData,
           {
             headers: {

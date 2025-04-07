@@ -461,7 +461,7 @@ export default function VendorDashboard() {
 
       try {
         const response = await fetch(
-          `/ekstore_registered_vendors/update_vendor_sales_channels`,
+          `/api/ekstore_registered_vendors/update_vendor_sales_channels`,
           {
             method: 'POST',
             headers: {

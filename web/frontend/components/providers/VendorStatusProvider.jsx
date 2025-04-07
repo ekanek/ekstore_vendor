@@ -9,7 +9,7 @@ export const useVendorStatus = () => useContext(VendorStatusContext);
 export function VendorStatusProvider({ children }) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const location = useLocation(); // Add this to track route changes
+  const location = useLocation();
   const [vendorStatus, setVendorStatus] = useState({
     isLoading: true,
     isRegistered: false,
@@ -29,7 +29,7 @@ export function VendorStatusProvider({ children }) {
           return;
 
         const response = await axios.get(
-          `/ekstore_registered_vendors/get_vendor_status`,
+          `/api/ekstore_registered_vendors/get_vendor_status`,
           {
             headers: {
               shop: shop,
@@ -49,8 +49,8 @@ export function VendorStatusProvider({ children }) {
             isRegistered: success ? form_completion_status : false,
             esignStatus: success ? esign_status : null,
             organisationExists: success,
-            shop: shop
-          });
+            shop: shop,
+          };
 
           setVendorStatus(newStatus);
           hasFetchedStatus.current = true;
@@ -85,7 +85,7 @@ export function VendorStatusProvider({ children }) {
           esignStatus: null,
           isCatalogueSettingsCompleted: false,
           organisationExists: false,
-          shop: shop
+          shop: shop,
         });
         if (location.pathname !== '/') {
           navigate('/');
@@ -94,11 +94,11 @@ export function VendorStatusProvider({ children }) {
     };
 
     checkVendorStatus();
-  }, [searchParams, location.pathname, navigate]); // Add location.pathname to dependencies
+  }, [searchParams, location.pathname, navigate]);
 
   return (
     <VendorStatusContext.Provider value={{ vendorStatus, setVendorStatus }}>
       {children}
     </VendorStatusContext.Provider>
   );
-} 
+}

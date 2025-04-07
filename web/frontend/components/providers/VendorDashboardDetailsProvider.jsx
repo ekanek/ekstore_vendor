@@ -44,7 +44,7 @@ export function VendorDashboardDetailsProvider({ children }) {
         setDashboardDetails({ isLoading: true, data: null, error: null });
 
         const response = await axios.get(
-          `/ekstore_registered_vendors/vendor_dashboard_details`,
+          `/api/ekstore_registered_vendors/vendor_dashboard_details`,
           {
             headers: {
               shop: shop,

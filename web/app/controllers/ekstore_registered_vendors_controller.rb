@@ -1,5 +1,6 @@
 class EkstoreRegisteredVendorsController < ApplicationController
-  before_action :set_organisation, only: [:get_vendor_status, :create_vendor_record, :check_esign_status, :update_vendor_catalogue_settings, :send_document_for_esign, :vendor_dashboard_details, :update_vendor_sales_channels]
+  skip_before_action :verify_authenticity_token
+  before_action :set_organisation, only: [:get_vendor_status, :create_vendor_record, :check_esign_status, :update_vendor_catalogue_settings, :send_document_for_esign, :vendor_dashboard_details, :update_vendor_sales_channels],unless: -> { params[:current_step].to_i.zero? && action_name == 'create_vendor_record' }
 
   def options
     head :ok
@@ -122,7 +123,12 @@ class EkstoreRegisteredVendorsController < ApplicationController
   private
 
   def set_organisation
-    @organisation = ShopifyAccount.find_by(shop: request.headers['shop'])&.organisation
+    if params[:current_step] != "0"
+      @organisation = ShopifyAccount.find_by(shop: request.headers['shop'])&.organisation
+    else
+      @organisation = nil
+      return true
+    end
   end
 
   def handle_personal_details(shop_name, access_token)
