@@ -1,91 +1,104 @@
-import { createContext, useContext, useState, useEffect, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
-// Create the context outside of the component
 const VendorStatusContext = createContext(null);
 
 export const useVendorStatus = () => useContext(VendorStatusContext);
 
-// Define your API base URL - consider moving this to an environment variable
-const API_BASE_URL = "https://facing-ball-apollo-relative.trycloudflare.com";
-
-// Export the provider as a named export (not default)
 export function VendorStatusProvider({ children }) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [vendorStatus, setVendorStatus] = useState({
     isLoading: true,
     isRegistered: false,
     esignStatus: null,
     isCatalogueSettingsCompleted: false,
     organisationExists: false,
+    shop: '',
   });
 
   const hasFetchedStatus = useRef(false);
 
   useEffect(() => {
     const checkVendorStatus = async () => {
+      const shop = searchParams.get('shop') || '';
       try {
-        const shop = searchParams.get('shop') || '';
-        if (!shop || hasFetchedStatus.current) return;
+        if (!shop || (hasFetchedStatus.current && location.pathname !== '/'))
+          return;
 
         const response = await axios.get(
-          `${API_BASE_URL}/shopify_sales_channel/ekstore_registered_vendors/get_vendor_status`,
+          `/api/ekstore_registered_vendors/get_vendor_status`,
           {
             headers: {
-              "shop": shop,
-              "Accept": "application/json",
-              "Content-Type": "application/json"
+              shop: shop,
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
             },
-            withCredentials: false
-          }
+            withCredentials: false,
+          },
         );
 
         if (response.status === 200) {
-          const { success, form_completion_status, esign_status } = response.data;
-          
-          setVendorStatus({
+          const { success, form_completion_status, esign_status } =
+            response.data;
+
+          const newStatus = {
             isLoading: false,
             isRegistered: success ? form_completion_status : false,
             esignStatus: success ? esign_status : null,
             organisationExists: success,
-            shop: shop
-          });
+            shop: shop,
+          };
 
-          // Handle routing based on response
-          if (!success) {
+          setVendorStatus(newStatus);
+          hasFetchedStatus.current = true;
+
+          // Only navigate if we're not already on the correct page
+          if (!success && location.pathname !== '/') {
             navigate('/');
-          } else if (form_completion_status && esign_status === 'pending') {
+          } else if (
+            form_completion_status &&
+            esign_status === 'pending' &&
+            location.pathname !== '/registration'
+          ) {
             navigate(`/registration?esignPending=true&shop=${shop}`);
-          } else if (form_completion_status && esign_status === 'signed') {
+          } else if (
+            form_completion_status &&
+            esign_status === 'signed' &&
+            location.pathname !== '/vendor-dashboard'
+          ) {
             navigate(`/vendor-dashboard?shop=${shop}`);
-          } else {
+          } else if (
+            !form_completion_status &&
+            location.pathname !== '/registration'
+          ) {
             navigate(`/registration?shop=${shop}`);
           }
-
-          hasFetchedStatus.current = true;
         }
       } catch (error) {
-        console.error("Error checking vendor status:", error);
+        console.error('Error checking vendor status:', error);
         setVendorStatus({
           isLoading: false,
           isRegistered: false,
           esignStatus: null,
           isCatalogueSettingsCompleted: false,
           organisationExists: false,
-          shop: shop
+          shop: shop,
         });
-        navigate('/');
+        if (location.pathname !== '/') {
+          navigate('/');
+        }
       }
     };
 
     checkVendorStatus();
-  }, [searchParams, navigate]);
+  }, [searchParams, location.pathname, navigate]);
 
   return (
     <VendorStatusContext.Provider value={{ vendorStatus, setVendorStatus }}>
       {children}
     </VendorStatusContext.Provider>
   );
-} 
+}

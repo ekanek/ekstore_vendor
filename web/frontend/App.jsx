@@ -1,26 +1,39 @@
-import { BrowserRouter } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { NavMenu } from "@shopify/app-bridge-react";
-import Routes from "./Routes";
+import { BrowserRouter, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { NavMenu } from '@shopify/app-bridge-react';
+import Routes from './Routes';
 
-import { QueryProvider, PolarisProvider, VendorStatusProvider } from "./components/providers";
+import {
+  QueryProvider,
+  PolarisProvider,
+  VendorStatusProvider,
+  VendorDashboardDetailsProvider,
+  ShopifyTokenProvider,
+} from './components/providers';
 
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
   // See documentation for <Routes /> for more info
-  const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
+  const pages = import.meta.globEager('./pages/**/!(*.test.[jt]sx)*.([jt]sx)');
   const { t } = useTranslation();
 
   return (
     <PolarisProvider>
       <BrowserRouter>
         <QueryProvider>
-          <VendorStatusProvider>
-            <NavMenu>
-              <a href="/" rel="home" />
-            </NavMenu>
-            <Routes pages={pages} />
-          </VendorStatusProvider>
+          <ShopifyTokenProvider>
+            <VendorStatusProvider>
+              <VendorDashboardDetailsProvider>
+                <NavMenu>
+                  <Link to='/' rel='home'>
+                    Home
+                  </Link>
+                  <Link to='/dashboard'>Dashboard</Link>
+                </NavMenu>
+                <Routes pages={pages} />
+              </VendorDashboardDetailsProvider>
+            </VendorStatusProvider>
+          </ShopifyTokenProvider>
         </QueryProvider>
       </BrowserRouter>
     </PolarisProvider>
