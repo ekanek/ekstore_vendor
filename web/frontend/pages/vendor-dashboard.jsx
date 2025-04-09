@@ -13,9 +13,6 @@ import {
   Card,
   InlineGrid,
   EmptyState,
-  Popover,
-  ChoiceList,
-  ActionList,
 } from '@shopify/polaris';
 import {
   SettingsIcon,
@@ -25,7 +22,6 @@ import {
   ProductListIcon,
   TransactionIcon,
   MoneyIcon,
-  InfoIcon,
 } from '@shopify/polaris-icons';
 import { useVendorDashboardDetails } from '../components/providers/VendorDashboardDetailsProvider';
 
@@ -310,6 +306,90 @@ const ImportSettingsCard = ({
   );
 };
 
+// Sales Platforms Section Component
+const SalesPlatformsSection = ({
+  dashboardDetails,
+  selectedPlatforms,
+  onPlatformToggle,
+}) => {
+  const platformOptions =
+    dashboardDetails.data?.available_platforms.map((platform) => ({
+      name: platform,
+      displayName: platform
+        .split('_')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
+      color: '#4B45FF',
+    })) || [];
+
+  return (
+    <Card roundedAbove='sm'>
+      <BlockStack gap='400'>
+        <Text as='h2' variant='headingLg'>
+          Sales Platforms
+        </Text>
+        <Text as='p' variant='bodySm' tone='subdued'>
+          Select the platforms you want to use
+        </Text>
+        <div
+          style={{
+            display: 'flex',
+            gap: '16px',
+            overflowX: 'auto',
+            padding: '16px 0',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {platformOptions.map((platform) => {
+            const isSelected = selectedPlatforms.includes(platform.name);
+            return (
+              <div
+                key={platform.name}
+                style={{
+                  background: isSelected
+                    ? `linear-gradient(135deg, ${platform.color}15 0%, ${platform.color}30 100%)`
+                    : 'var(--p-surface-subdued)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  border: `1px solid ${platform.color}20`,
+                  minWidth: '200px',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s ease',
+                }}
+                onClick={() => onPlatformToggle(platform.name)}
+              >
+                <BlockStack gap='200'>
+                  <InlineGrid columns='auto 1fr' gap='200'>
+                    <div
+                      style={{
+                        background: `${platform.color}20`,
+                        padding: '8px',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <Icon source={StarIcon} tone='base' />
+                    </div>
+                    <Text
+                      variant='headingSm'
+                      as='h3'
+                      tone={isSelected ? 'base' : 'subdued'}
+                    >
+                      {platform.displayName}
+                    </Text>
+                  </InlineGrid>
+                  <Text variant='bodySm' tone={isSelected ? 'base' : 'subdued'}>
+                    {isSelected ? 'Enabled' : 'Disabled'}
+                  </Text>
+                </BlockStack>
+              </div>
+            );
+          })}
+        </div>
+      </BlockStack>
+    </Card>
+  );
+};
+
 // Quick Actions Component
 const QuickActions = ({ isOpen, onToggle, navigate }) => {
   const actions = [
@@ -325,7 +405,6 @@ const QuickActions = ({ isOpen, onToggle, navigate }) => {
       path: '/analytics',
       color: 'info',
     },
-    { icon: InfoIcon, label: 'Support', path: '/support', color: 'warning' },
   ];
 
   return (
@@ -410,95 +489,14 @@ export default function VendorDashboard() {
   });
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [showQuickActions, setShowQuickActions] = useState(false);
-  const [popoverActive, setPopoverActive] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+
+  // Set selected platforms from dashboardDetails
   useEffect(() => {
     if (dashboardDetails.data?.vendor_platforms) {
       setSelectedPlatforms(dashboardDetails.data.vendor_platforms);
     }
   }, [dashboardDetails.data?.vendor_platforms]);
-
-  // const togglePopoverActive = useCallback(
-  //   () => setPopoverActive((popoverActive) => !popoverActive),
-  //   [],
-  // );
-
-  // const handlePlatformChange = useCallback((value) => {
-  //   setSelectedPlatforms(value);
-  // }, []);
-
-  // const platformOptions = [
-  //   { label: 'Foxy', value: 'Foxy' },
-  //   { label: 'Tata Neu', value: 'Tata Neu' },
-  //   { label: 'ViShop', value: 'ViShop' },
-  // ];
-
-  // const activator = (
-  //   <Button onClick={togglePopoverActive} disclosure>
-  //     {selectedPlatforms.length > 0
-  //       ? `${selectedPlatforms.join(', ')}`
-  //       : 'Select sales platforms'}
-  //   </Button>
-  // );
-
-  const platformOptions =
-    dashboardDetails.data?.available_platforms.map((platform) => ({
-      label: platform
-        .split('_')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' '),
-      value: platform,
-    })) || [];
-
-  const togglePopoverActive = useCallback(() => {
-    setPopoverActive((prev) => !prev);
-  }, []);
-
-  const handlePlatformChange = useCallback(
-    async (value) => {
-      setSelectedPlatforms(value);
-      console.log('Selected platforms for API call:', value);
-
-      try {
-        const response = await fetch(
-          `/api/ekstore_registered_vendors/update_vendor_sales_channels`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              shop: dashboardDetails?.shop,
-            },
-            body: JSON.stringify({
-              platforms: value,
-            }),
-          },
-        );
-
-        if (response.ok) {
-          console.log('Platforms successfully updated');
-        }
-      } catch (error) {
-        console.log('Error making platform selection API call:', error);
-      }
-    },
-    [dashboardDetails?.shop],
-  );
-
-  const activator = (
-    <Button onClick={togglePopoverActive} disclosure>
-      {selectedPlatforms.length > 0
-        ? `${selectedPlatforms
-            .map((platform) =>
-              platform
-                .split('_')
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' '),
-            )
-            .join(', ')}`
-        : 'Select sales platforms'}
-    </Button>
-  );
 
   const getShopParam = useCallback(() => {
     const sources = [
@@ -534,7 +532,7 @@ export default function VendorDashboard() {
   useEffect(() => {
     const loadCatalogueSettings = async () => {
       try {
-        const shopParam = getShopParam();
+        const shopParam = dashboardDetails?.shop;
         if (!shopParam)
           throw new Error('Shop parameter could not be determined');
         const response = await fetch('/api/catalogue_settings', {
@@ -557,11 +555,44 @@ export default function VendorDashboard() {
       }
     };
     loadCatalogueSettings();
-  }, [getShopParam]);
+  }, [dashboardDetails?.shop]);
 
   const handleTabChange = useCallback(
     (selectedTabIndex) => setSelectedTab(selectedTabIndex),
     [],
+  );
+
+  const handlePlatformToggle = useCallback(
+    async (platform) => {
+      const newPlatforms = selectedPlatforms.includes(platform)
+        ? selectedPlatforms.filter((p) => p !== platform)
+        : [...selectedPlatforms, platform];
+      setSelectedPlatforms(newPlatforms);
+
+      try {
+        const API_BASE_URL =
+          'https://toddler-egypt-qualified-australia.trycloudflare.com';
+        const response = await fetch(
+          `${API_BASE_URL}/shopify_sales_channel/ekstore_registered_vendors/update_vendor_sales_channels`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              shop: dashboardDetails?.shop,
+            },
+            body: JSON.stringify({
+              platforms: newPlatforms,
+            }),
+          },
+        );
+        if (!response.ok) throw new Error('Failed to update platforms');
+        console.log('Platforms successfully updated');
+      } catch (error) {
+        console.error('Error updating platforms:', error);
+      }
+    },
+    [selectedPlatforms, dashboardDetails?.shop],
   );
 
   const stats = STATS_CONFIG.map((stat) => ({
@@ -583,39 +614,20 @@ export default function VendorDashboard() {
                 with Ekstore
               </Text>
             </BlockStack>
-            <BlockStack gap='200'>
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-              >
-                <Text as='p' variant='bodyMd' fontWeight='medium'>
-                  Select sales platforms
-                </Text>
-                <Popover
-                  active={popoverActive}
-                  activator={activator}
-                  onClose={togglePopoverActive}
-                  preferredAlignment='right'
-                >
-                  <div style={{ padding: '16px', width: '200px' }}>
-                    <ChoiceList
-                      allowMultiple
-                      choices={platformOptions}
-                      selected={selectedPlatforms}
-                      onChange={handlePlatformChange}
-                    />
-                  </div>
-                </Popover>
-              </div>
-              <QuickActions
-                isOpen={showQuickActions}
-                onToggle={() => setShowQuickActions(!showQuickActions)}
-                navigate={navigate}
-              />
-            </BlockStack>
+            <QuickActions
+              isOpen={showQuickActions}
+              onToggle={() => setShowQuickActions(!showQuickActions)}
+              navigate={navigate}
+            />
           </InlineGrid>
         </BlockStack>
       </Card>
-
+      <br></br>
+      <SalesPlatformsSection
+        dashboardDetails={dashboardDetails}
+        selectedPlatforms={selectedPlatforms}
+        onPlatformToggle={handlePlatformToggle}
+      />
       <Layout>
         <Layout.Section>
           <BlockStack gap='400'>

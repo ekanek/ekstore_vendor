@@ -21,19 +21,18 @@ export default function App() {
     <PolarisProvider>
       <BrowserRouter>
         <QueryProvider>
-          <ShopifyTokenProvider>
-            <VendorStatusProvider>
-              <VendorDashboardDetailsProvider>
-                <NavMenu>
-                  <Link to='/' rel='home'>
-                    Home
-                  </Link>
-                  <Link to='/dashboard'>Dashboard</Link>
-                </NavMenu>
-                <Routes pages={pages} />
-              </VendorDashboardDetailsProvider>
-            </VendorStatusProvider>
-          </ShopifyTokenProvider>
+          <VendorStatusProvider>
+            <VendorDashboardDetailsProvider>
+              <NavMenu>
+                <Link to='/' rel='home'>
+                  Home
+                </Link>
+                <Link to='/dashboard'>Dashboard</Link>
+                <Link to='/Offers'>Offers</Link>
+              </NavMenu>
+              <Routes pages={pages} />
+            </VendorDashboardDetailsProvider>
+          </VendorStatusProvider>
         </QueryProvider>
       </BrowserRouter>
     </PolarisProvider>

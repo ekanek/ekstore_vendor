@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const VendorStatusContext = createContext(null);
+const API_BASE_URL = "https://toddler-egypt-qualified-australia.trycloudflare.com";
 
 export const useVendorStatus = () => useContext(VendorStatusContext);
 
@@ -11,6 +12,7 @@ export function VendorStatusProvider({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [vendorStatus, setVendorStatus] = useState({
+    data: {},
     isLoading: true,
     isRegistered: false,
     esignStatus: null,
@@ -29,7 +31,7 @@ export function VendorStatusProvider({ children }) {
           return;
 
         const response = await axios.get(
-          `/api/ekstore_registered_vendors/get_vendor_status`,
+           `${API_BASE_URL}/shopify_sales_channel/ekstore_registered_vendors/get_vendor_status`,
           {
             headers: {
               shop: shop,
@@ -45,6 +47,7 @@ export function VendorStatusProvider({ children }) {
             response.data;
 
           const newStatus = {
+            data: response?.data,
             isLoading: false,
             isRegistered: success ? form_completion_status : false,
             esignStatus: success ? esign_status : null,

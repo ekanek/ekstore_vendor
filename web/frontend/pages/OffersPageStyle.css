@@ -1,0 +1,70 @@
+/* Dashboard Page styles */
+.introTextStyle {
+    font-size: 12px;
+    font-weight: 450;
+    color: #333;
+    margin-bottom: 24px;
+    margin-left: 2px;
+  }
+  
+  .timeContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .yesterdayTag {
+    box-shadow: var(--p-shadow-button);
+    background-color: var(--p-color-bg-fill);
+    border-width: 0.5px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: var(--p-font-weight-medium);
+    padding: 4px 8px;
+  }
+  
+  .salesComparisonText {
+    font-size: 10px;
+    margin-left: 12px;
+    font-weight: bold;
+  }
+  
+  .orderComparisonText {
+    font-size: 10px;
+    margin-top: 12px;
+    margin-left: 12px;
+    font-weight: bold;
+  }
+  
+  .pieChartContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+  }
+  
+  /* Offers Page styles */
+  
+  .inputStyle {
+    margin-bottom: 8px;
+    margin-top: 8px;
+    width: 38px;
+    border-radius: 8px;
+    border-width: 0.5px;
+    padding: 4px;
+    text-align: center;
+  }
+  
+  .longInputStyle {
+    margin-bottom: 8px;
+    margin-top: 8px;
+    width: 100%;
+    border-radius: 8px;
+    border-width: 0.5px;
+    padding: 4px;
+    text-align: center;
+  }
+  
+  .descriptionStyle {
+    max-width: 300px;
+    white-space: normal;
+    overflow: hidden;
+  }

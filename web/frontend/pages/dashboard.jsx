@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Page,
@@ -26,7 +26,9 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
-import { DeliveryIcon } from '@shopify/polaris-icons';
+import { DeliveryIcon, StarIcon } from '@shopify/polaris-icons';
+import { useVendorStatus } from '../components/providers/VendorStatusProvider';
+import { useVendorDashboardDetails } from '../components/providers/VendorDashboardDetailsProvider';
 
 // Hardcoded data
 const dashBoardData = {
@@ -63,7 +65,7 @@ const dashBoardData = {
       title: 'Manage Products',
       subtitle: 'Add or update your product listings',
       cta_text: 'Go to Products',
-      cta_url: 'https://example.com/products',
+      cta_url: 'https://stunion.cat-ops.ekanek.app/settings/default_offers',
     },
     {
       title: 'View Orders',
@@ -148,7 +150,8 @@ const RenderBarChart = ({ data }) => {
 
 export default function AdditionalPage() {
   const { amount, hourly_data } = dashBoardData.total_app_sales;
-
+  const [dashboardData, setDashboardData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     total,
     repeat,
@@ -174,27 +177,147 @@ export default function AdditionalPage() {
       Prepaid: prepaid,
     },
   ];
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+  const { vendorStatus } = useVendorStatus();
+  const { dashboardDetails } = useVendorDashboardDetails();
+
+  useEffect(() => {
+    if (dashboardDetails.data?.vendor_platforms) {
+      setSelectedPlatforms(dashboardDetails.data.vendor_platforms);
+    }
+  }, [dashboardDetails.data?.vendor_platforms]);
+
+  useEffect(() => {
+    const shop = vendorStatus.shop || '';
+    if (!shop) {
+      console.log('No shop provided, skipping fetch');
+      return;
+    }
+    setIsLoading(true);
+    fetch(
+      'https://toddler-egypt-qualified-australia.trycloudflare.com/api/v2/shopify_apps/dashboard',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          shop: shop,
+          'tenant-info': 'public',
+        },
+      },
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Server responded with ${response.status}: ${response.statusText}`,
+          );
+        }
+        return response;
+      })
+      .then((data) => {
+        setDashboardData(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching dashboard data:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [vendorStatus.shop]);
+
+  const SalesPlatformsSection = ({
+    dashboardDetails,
+    selectedPlatforms,
+    // onPlatformToggle,
+  }) => {
+    const platformOptions =
+      dashboardDetails.data?.available_platforms.map((platform) => ({
+        name: platform,
+        displayName: platform
+          .split('_')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+        color: '#4B45FF',
+      })) || [];
+
+    return (
+      <Card roundedAbove='sm'>
+        <BlockStack gap='400'>
+          <Text as='h2' variant='headingLg'>
+            Sales Platforms
+          </Text>
+          <Text as='p' variant='bodySm' tone='subdued'>
+            Select the platforms you want to use
+          </Text>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+              overflowX: 'auto',
+              padding: '16px 0',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {platformOptions.map((platform) => {
+              const isSelected = selectedPlatforms.includes(platform.name);
+              return (
+                <div
+                  key={platform.name}
+                  style={{
+                    background: isSelected
+                      ? `linear-gradient(135deg, ${platform.color}15 0%, ${platform.color}30 100%)`
+                      : 'var(--p-surface-subdued)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: `1px solid ${platform.color}20`,
+                    minWidth: '200px',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s ease',
+                  }}
+                  // onClick={() => onPlatformToggle(platform.name)}
+                >
+                  <BlockStack gap='200'>
+                    <InlineGrid columns='auto 1fr' gap='200'>
+                      <div
+                        style={{
+                          background: `${platform.color}20`,
+                          padding: '8px',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        <Icon source={StarIcon} tone='base' />
+                      </div>
+                      <Text
+                        variant='headingSm'
+                        as='h3'
+                        tone={isSelected ? 'base' : 'subdued'}
+                      >
+                        {platform.displayName}
+                      </Text>
+                    </InlineGrid>
+                    <Text
+                      variant='bodySm'
+                      tone={isSelected ? 'base' : 'subdued'}
+                    >
+                      {isSelected ? 'Enabled' : 'Disabled'}
+                    </Text>
+                  </BlockStack>
+                </div>
+              );
+            })}
+          </div>
+        </BlockStack>
+      </Card>
+    );
+  };
 
   return (
     <Page>
-      <Text variant='headingXl' as='h4'>
-        Welcome to Ekstore
-      </Text>
-      <p
-        style={{
-          fontSize: 12,
-          fontWeight: 450,
-          color: 'grey',
-          marginLeft: 2,
-          marginBottom: 24,
-        }}
-      >
-        Ekstore enables you to seamlessly create and manage your e-commerce
-        apps. It integrates with Shopify, offering solutions for payments,
-        customer relationship management (CRM), and supply chain management.
-        Ekstore helps you streamline your operations and scale your e-commerce
-        presence with ease.
-      </p>
+      <SalesPlatformsSection
+        dashboardDetails={dashboardDetails}
+        selectedPlatforms={selectedPlatforms}
+        // onPlatformToggle={handlePlatformToggle}
+      />
+      <br></br>
       <Text variant='headingLg' as='h5'>
         Analytics Dashboard
       </Text>

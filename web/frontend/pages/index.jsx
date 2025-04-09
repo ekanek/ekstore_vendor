@@ -9,24 +9,21 @@ import {
 } from '@shopify/polaris';
 import { TitleBar } from '@shopify/app-bridge-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useVendorStatus } from '../components/providers/VendorStatusProvider';
 import { useEffect } from 'react';
 
 export default function HomePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation(); // Add this to check the current route
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { vendorStatus } = useVendorStatus();
-  const { isLoading, isRegistered, shop } = vendorStatus;
-  console.log('---pages index', vendorStatus);
-  // Redirect to /vendor-dashboard if registered and on the home page
+  const { isLoading, esignStatus, shop } = vendorStatus;
   useEffect(() => {
-    if (isRegistered && location.pathname === '/') {
+    if (esignStatus === 'signed' && location.pathname === '/') {
       navigate(`/vendor-dashboard?shop=${shop}`, { replace: true });
     }
-  }, [isRegistered, location.pathname, navigate, shop]);
+  }, [esignStatus, location.pathname, navigate, shop]);
 
   if (isLoading) {
     return (
@@ -44,8 +41,8 @@ export default function HomePage() {
   }
 
   // If registered, we don’t render anything here (navigation happens in useEffect)
-  if (isRegistered) {
-    return null; // or a fallback UI if needed
+  if (esignStatus) {
+    return null;
   }
 
   // If not registered, show the welcome page
@@ -62,29 +59,50 @@ export default function HomePage() {
             <TextContainer spacing='loose'>
               <div style={{ textAlign: 'center' }}>
                 <Text as='h2' variant='headingLg'>
-                  Thank you for becoming a part of Ekanek Family 🎉
+                  Welcome to the EkStore Family!
                 </Text>
 
                 <div style={{ margin: '20px 0' }}>
                   <Text as='p' variant='bodyMd'>
-                    Ekstore Nexus empowers your business growth by providing a
-                    unified platform to showcase your products across multiple
-                    sales channels. Our integrated solution streamlines your
-                    product listing process while offering exclusive
-                    opportunities to participate in targeted campaigns,
-                    ultimately driving increased visibility and sales
-                    performance. By leveraging our comprehensive marketplace
-                    integration, you can efficiently expand your market reach
-                    and optimize your business operations.
+                    EkStore is a unified ecommerce ecosystem that helps you grow
+                    your business by:
                   </Text>
+                </div>
+
+                <div style={{ margin: '20px 0', textAlign: 'left' }}>
+                  <ul style={{ paddingLeft: '20px' }}>
+                    <li>
+                      <Text as='p' variant='bodyMd'>
+                        Connecting your Shopify store to multiple sales channels
+                        in one click
+                      </Text>
+                    </li>
+                    <li>
+                      <Text as='p' variant='bodyMd'>
+                        Expanding your reach through app, marketplaces, ONDC
+                        integrations and more
+                      </Text>
+                    </li>
+                    <li>
+                      <Text as='p' variant='bodyMd'>
+                        Simplifying product listings and manage everything from
+                        one place
+                      </Text>
+                    </li>
+                    <li>
+                      <Text as='p' variant='bodyMd'>
+                        Accessing exclusive campaigns to boost visibility and
+                        sales
+                      </Text>
+                    </li>
+                  </ul>
                 </div>
 
                 <div style={{ margin: '20px 0' }}>
                   <Text as='p' variant='bodyMd'>
-                    To proceed further, we require you to complete a mandatory
-                    onboarding form that will help us better understand your
-                    business requirements and provide you with tailored
-                    solutions.
+                    To set up your store, please complete the onboarding form.
+                    This will help us understand your business better and
+                    provide you with tailored solutions.
                   </Text>
                 </div>
 

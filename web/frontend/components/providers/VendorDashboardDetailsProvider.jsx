@@ -10,6 +10,8 @@ import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 // Define the API base URL (consider moving to an environment variable)
+const API_BASE_URL =
+  'https://toddler-egypt-qualified-australia.trycloudflare.com';
 
 // Create the context
 const VendorDashboardDetailsContext = createContext(null);
@@ -44,7 +46,7 @@ export function VendorDashboardDetailsProvider({ children }) {
         setDashboardDetails({ isLoading: true, data: null, error: null });
 
         const response = await axios.get(
-          `/api/ekstore_registered_vendors/vendor_dashboard_details`,
+          `${API_BASE_URL}/shopify_sales_channel/ekstore_registered_vendors/vendor_dashboard_details`,
           {
             headers: {
               shop: shop,
